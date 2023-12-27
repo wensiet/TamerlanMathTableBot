@@ -96,11 +96,14 @@ def check_answer(message: types.Message) -> None:
         user.total_answered += 1
         if user_answer == correct_answer:
             user.correct_answered += 1
-            if user.correct_answered % 100:
-                admins = session.query().filter_by(status="admin").all()
-                for admin in admins:
-                    bot.send_message(admin.id, f"Пользователь {user.user_id} достиг "
-                                               f"{user.correct_answered} правильных ответов.")
+            try:
+                if user.correct_answered % 100 == 0:
+                    admins = session.query().filter_by(status="admin").all()
+                    for admin in admins:
+                        bot.send_message(admin.id, f"Пользователь {user.user_id} достиг "
+                                                   f"{user.correct_answered} правильных ответов.")
+            except Exception as e:
+                print(e)
             update_balance(user)
             bot.send_message(message.chat.id, f"Правильно! Ты накопил: {user.balance:.2f}₽")
         else:
