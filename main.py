@@ -96,6 +96,11 @@ def check_answer(message: types.Message) -> None:
         user.total_answered += 1
         if user_answer == correct_answer:
             user.correct_answered += 1
+            if user.correct_answered % 100:
+                admins = session.query().filter_by(status="admin").all()
+                for admin in admins:
+                    bot.send_message(admin.id, f"Пользователь {user.user_id} достиг "
+                                               f"{user.correct_answered} правильных ответов.")
             update_balance(user)
             bot.send_message(message.chat.id, f"Правильно! Ты накопил: {user.balance:.2f}₽")
         else:
@@ -124,7 +129,7 @@ def checkout(message: types.Message):
 
 
 @bot.message_handler(commands=["users"])
-def checkout(message: types.Message):
+def get_users_list(message: types.Message):
     uid = message.from_user.id
     user = get_or_create_user(uid)
     if user.status == "admin":
