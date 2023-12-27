@@ -37,7 +37,7 @@ session = Session()
 def get_or_create_user(uid: int) -> User:
     existing = session.query(User).filter_by(user_id=uid).first()
     if existing is None:
-        db_user = User(user_id=uid, status="admin", balance=0.00)
+        db_user = User(user_id=uid, status="user", balance=0.00)
         session.merge(db_user)
         session.commit()
     return existing
